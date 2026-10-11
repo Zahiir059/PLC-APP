@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart Beverage Plant - PLC + HMI/SCADA Simulator</title>
+<meta name="description" content="Web-based PLC (ladder logic) and HMI/SCADA simulator of a beverage filling and packaging plant.">
+<meta name="theme-color" content="#2a343d">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/icon-192.png">
+<link rel="stylesheet" href="../css/hmi.css">
+</head>
+<body class="loggedout">
+<noscript>This simulator needs JavaScript.</noscript>
+<!-- engine -->
+<script src="../js/config.js"></script>
+<script src="../js/tags.js"></script>
+<script src="../js/plc-engine.js"></script>
+<script src="../js/process-model.js"></script>
+<script src="../js/sim.js"></script>
+<script src="../js/alarms.js"></script>
+<script src="../data/default-data.js"></script>
+<script src="../js/storage.js"></script>
+<script src="../js/production.js"></script>
+<script src="../js/core.js"></script>
+<!-- UI -->
+<script src="../js/ui.js"></script>
+<script src="../js/charts.js"></script>
+<script src="../js/ladder-editor.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/screens-operate.js"></script>
+<script src="../js/screens-monitor.js"></script>
+<script src="../js/screens-prod.js"></script>
+<script src="../js/engineering.js"></script>
+<script src="../js/screens-eng.js"></script>
+<script src="../js/screens-learn.js"></script>
+<script>
+(function () {
+  'use strict';
+  var P = PLANT;
+  if (P.Store.get('theme', 'light') === 'dark') document.documentElement.dataset.theme = 'dark';
+  P.I18N.set(P.FEATURES.urdu ? P.Store.get('lang', 'en') : 'en');
+  P.boot();
+  P.App.showLogin();
+  if (P.FEATURES.pwa && 'serviceWorker' in navigator && /^https?:/.test(location.protocol)) {
+    navigator.serviceWorker.register('../sw.js').catch(function () { /* offline install is optional */ });
+  }
+  window.addEventListener('beforeunload', function () { P.Audit.flush(); });
+})();
+</script>
+</body>
+</html>

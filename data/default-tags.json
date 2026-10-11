@@ -1,0 +1,1066 @@
+[
+ {
+  "name": "I_ESTOP_OK",
+  "type": "BOOL",
+  "addr": "%IX0.0",
+  "desc": "Emergency stop circuit healthy (NC chain, 1 = OK)",
+  "init": true,
+  "unit": ""
+ },
+ {
+  "name": "I_MCC_OK",
+  "type": "BOOL",
+  "addr": "%IX0.1",
+  "desc": "Motor control centre supply healthy (1 = OK)",
+  "init": true,
+  "unit": ""
+ },
+ {
+  "name": "I_GAS_ALARM",
+  "type": "BOOL",
+  "addr": "%IX0.2",
+  "desc": "Gas detector GD-701 high-high contact",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "I_OL_P101",
+  "type": "BOOL",
+  "addr": "%IX0.3",
+  "desc": "P-101 syrup pump overload relay tripped",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "I_OL_P102",
+  "type": "BOOL",
+  "addr": "%IX0.4",
+  "desc": "P-102 water pump overload relay tripped",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "I_OL_CONV",
+  "type": "BOOL",
+  "addr": "%IX0.5",
+  "desc": "M-401 conveyor motor overload tripped",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "I_JAM",
+  "type": "BOOL",
+  "addr": "%IX0.6",
+  "desc": "Conveyor jam switch JS-401",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "I_CAP_LOW",
+  "type": "BOOL",
+  "addr": "%IX0.7",
+  "desc": "Cap magazine low level LS-302",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "I_LBL_LOW",
+  "type": "BOOL",
+  "addr": "%IX1.0",
+  "desc": "Label reel low LS-501",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "DI_PE301",
+  "type": "BOOL",
+  "addr": "%IX1.1",
+  "desc": "PE-301 can present at filler",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "DI_PE302",
+  "type": "BOOL",
+  "addr": "%IX1.2",
+  "desc": "PE-302 can present at capper",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "DI_PE401",
+  "type": "BOOL",
+  "addr": "%IX1.3",
+  "desc": "PE-401 can present at inspection station",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "DI_INSP_FAIL",
+  "type": "BOOL",
+  "addr": "%IX1.4",
+  "desc": "Inspection camera result = FAIL (underfill / no cap / high temp)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "DI_PE501",
+  "type": "BOOL",
+  "addr": "%IX1.5",
+  "desc": "PE-501 can present at labeler",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "DI_PE502",
+  "type": "BOOL",
+  "addr": "%IX1.6",
+  "desc": "PE-502 can present at label verification",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "DI_LBL_FAIL",
+  "type": "BOOL",
+  "addr": "%IX1.7",
+  "desc": "Label verification result = FAIL (label missing)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "DI_PE601",
+  "type": "BOOL",
+  "addr": "%IX2.0",
+  "desc": "PE-601 can delivered to carton packer",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "DI_BARCODE",
+  "type": "BOOL",
+  "addr": "%IX2.1",
+  "desc": "BCR-601 carton barcode scanned (pulse)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "DI_PE701",
+  "type": "BOOL",
+  "addr": "%IX2.2",
+  "desc": "PE-701 carton arrived at palletizer",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "AI_LT101",
+  "type": "REAL",
+  "addr": "%IW0",
+  "desc": "LT-101 syrup tank level",
+  "init": 60,
+  "unit": "%"
+ },
+ {
+  "name": "AI_LT102",
+  "type": "REAL",
+  "addr": "%IW1",
+  "desc": "LT-102 water tank level",
+  "init": 65,
+  "unit": "%"
+ },
+ {
+  "name": "AI_WT103",
+  "type": "REAL",
+  "addr": "%IW2",
+  "desc": "WT-103 mixing tank weight (load cell)",
+  "init": 0,
+  "unit": "kg"
+ },
+ {
+  "name": "AI_LT201",
+  "type": "REAL",
+  "addr": "%IW3",
+  "desc": "LT-201 pasteurizer tank level",
+  "init": 0,
+  "unit": "%"
+ },
+ {
+  "name": "AI_TT201",
+  "type": "REAL",
+  "addr": "%IW4",
+  "desc": "TT-201 pasteurizer temperature",
+  "init": 25,
+  "unit": "degC"
+ },
+ {
+  "name": "AI_PT201",
+  "type": "REAL",
+  "addr": "%IW5",
+  "desc": "PT-201 pasteurizer pressure",
+  "init": 1,
+  "unit": "bar"
+ },
+ {
+  "name": "AI_LT301",
+  "type": "REAL",
+  "addr": "%IW6",
+  "desc": "LT-301 filler bowl level",
+  "init": 0,
+  "unit": "%"
+ },
+ {
+  "name": "AI_TT301",
+  "type": "REAL",
+  "addr": "%IW7",
+  "desc": "TT-301 filler bowl product temperature",
+  "init": 25,
+  "unit": "degC"
+ },
+ {
+  "name": "AI_GAS_PPM",
+  "type": "REAL",
+  "addr": "%IW8",
+  "desc": "AT-701 gas concentration",
+  "init": 0,
+  "unit": "ppm"
+ },
+ {
+  "name": "AI_CONV_SPD",
+  "type": "REAL",
+  "addr": "%IW9",
+  "desc": "SI-401 conveyor speed feedback",
+  "init": 0,
+  "unit": "%"
+ },
+ {
+  "name": "AI_CONV_AMP",
+  "type": "REAL",
+  "addr": "%IW10",
+  "desc": "II-401 conveyor motor current",
+  "init": 0,
+  "unit": "A"
+ },
+ {
+  "name": "AI_KW",
+  "type": "REAL",
+  "addr": "%IW11",
+  "desc": "JI-001 total plant power",
+  "init": 0,
+  "unit": "kW"
+ },
+ {
+  "name": "Q_P101",
+  "type": "BOOL",
+  "addr": "%QX0.0",
+  "desc": "Syrup pump P-101",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_P102",
+  "type": "BOOL",
+  "addr": "%QX0.1",
+  "desc": "Water pump P-102",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_P103",
+  "type": "BOOL",
+  "addr": "%QX0.2",
+  "desc": "Transfer pump P-103 (mixer to pasteurizer)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_P104",
+  "type": "BOOL",
+  "addr": "%QX0.3",
+  "desc": "Filler feed pump P-104",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_XV101",
+  "type": "BOOL",
+  "addr": "%QX0.4",
+  "desc": "Syrup tank inlet valve XV-101",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_XV102",
+  "type": "BOOL",
+  "addr": "%QX0.5",
+  "desc": "Water tank inlet valve XV-102",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_XV103",
+  "type": "BOOL",
+  "addr": "%QX0.6",
+  "desc": "Syrup dosing valve XV-103",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_XV104",
+  "type": "BOOL",
+  "addr": "%QX0.7",
+  "desc": "Water dosing valve XV-104",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_XV105",
+  "type": "BOOL",
+  "addr": "%QX1.0",
+  "desc": "Mixer discharge valve XV-105",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_AGIT",
+  "type": "BOOL",
+  "addr": "%QX1.1",
+  "desc": "Mixer agitator M-103",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_HEATER",
+  "type": "BOOL",
+  "addr": "%QX1.2",
+  "desc": "Heater / steam contactor K-201",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_FILL",
+  "type": "BOOL",
+  "addr": "%QX1.3",
+  "desc": "Filling valve FV-301",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_CAP",
+  "type": "BOOL",
+  "addr": "%QX1.4",
+  "desc": "Capper press CP-302",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_CONV",
+  "type": "BOOL",
+  "addr": "%QX1.5",
+  "desc": "Conveyor motor M-401 run",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_FEEDER",
+  "type": "BOOL",
+  "addr": "%QX1.6",
+  "desc": "Empty-can infeed gate",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_REJ1",
+  "type": "BOOL",
+  "addr": "%QX1.7",
+  "desc": "Reject pusher RP-401 (inspection)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_REJ2",
+  "type": "BOOL",
+  "addr": "%QX2.0",
+  "desc": "Reject pusher RP-502 (label check)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_LABEL",
+  "type": "BOOL",
+  "addr": "%QX2.1",
+  "desc": "Labeler LB-501",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_CARTON",
+  "type": "BOOL",
+  "addr": "%QX2.2",
+  "desc": "Carton packer CK-601",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_PALLETIZER",
+  "type": "BOOL",
+  "addr": "%QX2.3",
+  "desc": "Palletizer robot PZ-701",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_WRAP",
+  "type": "BOOL",
+  "addr": "%QX2.4",
+  "desc": "Pallet wrapper WR-702",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_HORN",
+  "type": "BOOL",
+  "addr": "%QX2.5",
+  "desc": "Alarm horn",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_LAMP_G",
+  "type": "BOOL",
+  "addr": "%QX2.6",
+  "desc": "Beacon green (running)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_LAMP_R",
+  "type": "BOOL",
+  "addr": "%QX2.7",
+  "desc": "Beacon red (tripped)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "Q_LAMP_A",
+  "type": "BOOL",
+  "addr": "%QX3.0",
+  "desc": "Beacon amber (alarm)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "AO_HEATER",
+  "type": "REAL",
+  "addr": "%QW0",
+  "desc": "Heater power command (PID output)",
+  "init": 0,
+  "unit": "%"
+ },
+ {
+  "name": "AO_CONV_SPD",
+  "type": "REAL",
+  "addr": "%QW1",
+  "desc": "Conveyor VFD speed reference",
+  "init": 0,
+  "unit": "%"
+ },
+ {
+  "name": "M_START",
+  "type": "BOOL",
+  "addr": "%MX0.0",
+  "desc": "HMI Start pushbutton (momentary)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "M_STOP",
+  "type": "BOOL",
+  "addr": "%MX0.1",
+  "desc": "HMI Stop pushbutton (momentary)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "M_RESET",
+  "type": "BOOL",
+  "addr": "%MX0.2",
+  "desc": "HMI Reset / trip reset (momentary)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "M_ABORT",
+  "type": "BOOL",
+  "addr": "%MX0.3",
+  "desc": "HMI Abort batch (momentary)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "M_NEW_ORDER",
+  "type": "BOOL",
+  "addr": "%MX0.4",
+  "desc": "HMI New production order - resets order counters (momentary)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "M_AUTO",
+  "type": "BOOL",
+  "addr": "%MX0.5",
+  "desc": "Auto(1)/Manual(0) mode selector",
+  "init": true,
+  "unit": ""
+ },
+ {
+  "name": "PID_AUTO",
+  "type": "BOOL",
+  "addr": "%MX0.6",
+  "desc": "Temperature loop Auto(1)/Manual(0)",
+  "init": true,
+  "unit": ""
+ },
+ {
+  "name": "CMD_P101",
+  "type": "BOOL",
+  "addr": "%MX0.7",
+  "desc": "Manual command for P101",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "CMD_P102",
+  "type": "BOOL",
+  "addr": "%MX1.0",
+  "desc": "Manual command for P102",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "CMD_P103",
+  "type": "BOOL",
+  "addr": "%MX1.1",
+  "desc": "Manual command for P103",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "CMD_P104",
+  "type": "BOOL",
+  "addr": "%MX1.2",
+  "desc": "Manual command for P104",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "CMD_XV101",
+  "type": "BOOL",
+  "addr": "%MX1.3",
+  "desc": "Manual command for XV101",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "CMD_XV102",
+  "type": "BOOL",
+  "addr": "%MX1.4",
+  "desc": "Manual command for XV102",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "CMD_XV103",
+  "type": "BOOL",
+  "addr": "%MX1.5",
+  "desc": "Manual command for XV103",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "CMD_XV104",
+  "type": "BOOL",
+  "addr": "%MX1.6",
+  "desc": "Manual command for XV104",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "CMD_XV105",
+  "type": "BOOL",
+  "addr": "%MX1.7",
+  "desc": "Manual command for XV105",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "CMD_AGIT",
+  "type": "BOOL",
+  "addr": "%MX2.0",
+  "desc": "Manual command for AGIT",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "CMD_HEATER",
+  "type": "BOOL",
+  "addr": "%MX2.1",
+  "desc": "Manual command for HEATER",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "CMD_CONV",
+  "type": "BOOL",
+  "addr": "%MX2.2",
+  "desc": "Manual command for CONV",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "PLANT_RUN",
+  "type": "BOOL",
+  "addr": "%MX2.3",
+  "desc": "Plant running (latched by Start)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "AUTO_OK",
+  "type": "BOOL",
+  "addr": "%MX2.4",
+  "desc": "Auto run permissive",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "SAFE_OK",
+  "type": "BOOL",
+  "addr": "%MX2.5",
+  "desc": "Safety permissive (no trip, E-stop OK, power OK)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "TRIP",
+  "type": "BOOL",
+  "addr": "%MX2.6",
+  "desc": "Safety trip latch",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "CAUSE_ACTIVE",
+  "type": "BOOL",
+  "addr": "%MX2.7",
+  "desc": "A trip cause is present",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "SENSOR_FAIL",
+  "type": "BOOL",
+  "addr": "%MX3.0",
+  "desc": "Analog sensor out of range",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "LINE_FAULT",
+  "type": "BOOL",
+  "addr": "%MX3.1",
+  "desc": "Conveyor overload or jam",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "ORDER_DONE",
+  "type": "BOOL",
+  "addr": "%MX3.2",
+  "desc": "Production order target reached",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "PROD_EN",
+  "type": "BOOL",
+  "addr": "%MX3.3",
+  "desc": "Production (filling line) enabled - SEQ step 80",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "LV1_REFILL",
+  "type": "BOOL",
+  "addr": "%MX3.4",
+  "desc": "Syrup tank refill active",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "LV2_REFILL",
+  "type": "BOOL",
+  "addr": "%MX3.5",
+  "desc": "Water tank refill active",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "LSLL_101",
+  "type": "BOOL",
+  "addr": "%MX3.6",
+  "desc": "Syrup tank empty (<5 %)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "LSLL_102",
+  "type": "BOOL",
+  "addr": "%MX3.7",
+  "desc": "Water tank empty (<5 %)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "LSLL_301",
+  "type": "BOOL",
+  "addr": "%MX4.0",
+  "desc": "Filler bowl empty (<3 %)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "DOSE_FAULT",
+  "type": "BOOL",
+  "addr": "%MX4.1",
+  "desc": "Dosing timeout",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "FEED_REQ",
+  "type": "BOOL",
+  "addr": "%MX4.2",
+  "desc": "Filler bowl requests product",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "FILL_REQ",
+  "type": "BOOL",
+  "addr": "%MX4.3",
+  "desc": "Filler station active",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "CAP_REQ",
+  "type": "BOOL",
+  "addr": "%MX4.4",
+  "desc": "Capper station active",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "LBL_REQ",
+  "type": "BOOL",
+  "addr": "%MX4.5",
+  "desc": "Labeler station active",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "FILL_DONE",
+  "type": "BOOL",
+  "addr": "%MX4.6",
+  "desc": "Can at filler already filled",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "CAP_DONE",
+  "type": "BOOL",
+  "addr": "%MX4.7",
+  "desc": "Can at capper already capped",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "LBL_DONE",
+  "type": "BOOL",
+  "addr": "%MX5.0",
+  "desc": "Can at labeler already labelled",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "CONV_HOLD",
+  "type": "BOOL",
+  "addr": "%MX5.1",
+  "desc": "Conveyor held while a station works",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "CTN_RST",
+  "type": "BOOL",
+  "addr": "%MX5.2",
+  "desc": "Reset can-per-carton counter",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "PLT_RST",
+  "type": "BOOL",
+  "addr": "%MX5.3",
+  "desc": "Reset carton-per-pallet counter",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "ALM_ANY",
+  "type": "BOOL",
+  "addr": "%MX5.4",
+  "desc": "Any alarm active (from alarm server)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "ALM_UNACK",
+  "type": "BOOL",
+  "addr": "%MX5.5",
+  "desc": "Unacknowledged alarm present (from alarm server)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "ALM_CRIT_UNACK",
+  "type": "BOOL",
+  "addr": "%MX5.6",
+  "desc": "Unacknowledged critical alarm (from alarm server)",
+  "init": false,
+  "unit": ""
+ },
+ {
+  "name": "SEQ_STEP",
+  "type": "INT",
+  "addr": "%MW0",
+  "desc": "Main sequence step (0 idle ... 90 batch complete)",
+  "init": 0,
+  "unit": ""
+ },
+ {
+  "name": "ORDER_TARGET",
+  "type": "INT",
+  "addr": "%MW1",
+  "desc": "Production order target (cans)",
+  "init": 60,
+  "unit": "cans"
+ },
+ {
+  "name": "REC_ID",
+  "type": "INT",
+  "addr": "%MW2",
+  "desc": "Selected recipe number",
+  "init": 1,
+  "unit": ""
+ },
+ {
+  "name": "REC_CANS_CTN",
+  "type": "INT",
+  "addr": "%MW3",
+  "desc": "Recipe: cans per carton",
+  "init": 6,
+  "unit": ""
+ },
+ {
+  "name": "REC_CTN_PLT",
+  "type": "INT",
+  "addr": "%MW4",
+  "desc": "Recipe: cartons per pallet",
+  "init": 4,
+  "unit": ""
+ },
+ {
+  "name": "REC_FILL_ML",
+  "type": "INT",
+  "addr": "%MW5",
+  "desc": "Recipe: fill volume",
+  "init": 330,
+  "unit": "ml"
+ },
+ {
+  "name": "REC_HOLD_S",
+  "type": "INT",
+  "addr": "%MW6",
+  "desc": "Recipe: pasteurization hold time",
+  "init": 10,
+  "unit": "s"
+ },
+ {
+  "name": "FILL_TIME_MS",
+  "type": "INT",
+  "addr": "%MW7",
+  "desc": "Calculated fill time",
+  "init": 1320,
+  "unit": "ms"
+ },
+ {
+  "name": "HOLD_MS",
+  "type": "INT",
+  "addr": "%MW8",
+  "desc": "Calculated hold time",
+  "init": 10000,
+  "unit": "ms"
+ },
+ {
+  "name": "REC_BATCH_KG",
+  "type": "REAL",
+  "addr": "%MD0",
+  "desc": "Recipe: batch size",
+  "init": 40,
+  "unit": "kg"
+ },
+ {
+  "name": "REC_SYRUP_PCT",
+  "type": "REAL",
+  "addr": "%MD1",
+  "desc": "Recipe: syrup ratio (kg per 100 kg)",
+  "init": 18,
+  "unit": "%"
+ },
+ {
+  "name": "REC_TEMP_SP",
+  "type": "REAL",
+  "addr": "%MD2",
+  "desc": "Recipe: pasteurization temperature",
+  "init": 85,
+  "unit": "degC"
+ },
+ {
+  "name": "SYRUP_TARGET_KG",
+  "type": "REAL",
+  "addr": "%MD3",
+  "desc": "Syrup dosing target weight",
+  "init": 7.2,
+  "unit": "kg"
+ },
+ {
+  "name": "TMP_SYR",
+  "type": "REAL",
+  "addr": "%MD4",
+  "desc": "Scratch value for syrup calculation",
+  "init": 0,
+  "unit": ""
+ },
+ {
+  "name": "TT_SP",
+  "type": "REAL",
+  "addr": "%MD5",
+  "desc": "Temperature loop setpoint",
+  "init": 85,
+  "unit": "degC"
+ },
+ {
+  "name": "TT_HOLD_MIN",
+  "type": "REAL",
+  "addr": "%MD6",
+  "desc": "Minimum temperature for a valid hold",
+  "init": 82,
+  "unit": "degC"
+ },
+ {
+  "name": "TT_HH",
+  "type": "REAL",
+  "addr": "%MD7",
+  "desc": "Over-temperature trip limit",
+  "init": 95,
+  "unit": "degC"
+ },
+ {
+  "name": "PT_HH",
+  "type": "REAL",
+  "addr": "%MD8",
+  "desc": "Over-pressure trip limit",
+  "init": 3,
+  "unit": "bar"
+ },
+ {
+  "name": "KP_TEMP",
+  "type": "REAL",
+  "addr": "%MD9",
+  "desc": "Temperature PID Kp",
+  "init": 8,
+  "unit": "%/degC"
+ },
+ {
+  "name": "KI_TEMP",
+  "type": "REAL",
+  "addr": "%MD10",
+  "desc": "Temperature PID Ki",
+  "init": 0.25,
+  "unit": "%/(degC.s)"
+ },
+ {
+  "name": "KD_TEMP",
+  "type": "REAL",
+  "addr": "%MD11",
+  "desc": "Temperature PID Kd",
+  "init": 30,
+  "unit": "%.s/degC"
+ },
+ {
+  "name": "PID_MAN_OUT",
+  "type": "REAL",
+  "addr": "%MD12",
+  "desc": "Temperature loop manual output",
+  "init": 0,
+  "unit": "%"
+ },
+ {
+  "name": "CONV_SPEED_SP",
+  "type": "REAL",
+  "addr": "%MD13",
+  "desc": "Conveyor speed setpoint",
+  "init": 60,
+  "unit": "%"
+ },
+ {
+  "name": "LT_LOW_SP",
+  "type": "REAL",
+  "addr": "%MD14",
+  "desc": "Tank refill start level",
+  "init": 30,
+  "unit": "%"
+ },
+ {
+  "name": "LT_HIGH_SP",
+  "type": "REAL",
+  "addr": "%MD15",
+  "desc": "Tank refill stop level",
+  "init": 90,
+  "unit": "%"
+ },
+ {
+  "name": "FILL_MS_PER_ML",
+  "type": "REAL",
+  "addr": "%MD16",
+  "desc": "Fill time per ml (valve flow 250 ml/s)",
+  "init": 4,
+  "unit": "ms/ml"
+ },
+ {
+  "name": "TEMP_REJ_HI",
+  "type": "REAL",
+  "addr": "%MD17",
+  "desc": "Inspection: reject cans filled hotter than",
+  "init": 92,
+  "unit": "degC"
+ },
+ {
+  "name": "REJ_RATE",
+  "type": "REAL",
+  "addr": "%MD18",
+  "desc": "Reject rate over last 20 cans (HMI calculated)",
+  "init": 0,
+  "unit": "%"
+ }
+]

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-tests - Smart Beverage Plant PLC</title>
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/hmi.css">
+<style>body{overflow:auto;padding:16px}.wrap{max-width:980px;margin:0 auto}.sum{font-size:22px;font-weight:700;margin:10px 0}.sum.ok{color:var(--ok)}.sum.bad{color:var(--bad)}
+.r{display:flex;gap:10px;padding:5px 8px;border-bottom:1px solid var(--line2);font-size:14px}.r .s{width:48px;font-weight:700}.r.p .s{color:var(--ok)}.r.f{background:color-mix(in srgb,var(--bad) 12%,transparent)}.r.f .s{color:var(--bad)}.r small{color:var(--bad)}
+h3{margin:18px 0 4px}</style>
+</head>
+<body><div class="wrap">
+<h2>PLC engine and plant self-tests</h2>
+<p class="hint">Automated checks that run in your browser: timers, counters, latches, PID, interlocks, forces, compiler, ST generator, start sequence, dosing, counters, E-stop, gas leak, over-temperature, sensor failure, power loss, alarm state machine, production layer.
+<a href="index.html">Portfolio</a> &middot; <a href="simulator/index.html">Simulator</a></p>
+<div class="toolbar"><button class="btn primary" id="rerun">Run again</button><span id="time" class="hint"></span></div>
+<div id="sum" class="sum">Running...</div><div id="out"></div></div>
+<script src="js/config.js"></script><script src="js/tags.js"></script><script src="js/plc-engine.js"></script><script src="js/process-model.js"></script><script src="js/sim.js"></script><script src="js/alarms.js"></script><script src="js/production.js"></script><script src="data/default-data.js"></script>
+<script src="js/selftest.js"></script><script src="js/selftest-plant.js"></script>
+<script>
+(function(){
+  function run(){
+    var out=document.getElementById('out'),sum=document.getElementById('sum');out.innerHTML='';sum.textContent='Running...';sum.className='sum';
+    setTimeout(function(){
+      var t0=performance.now(),res=PLANT.runSelfTests(),fail=0,group='';
+      res.forEach(function(r){
+        if(r.group!==group){group=r.group;var h=document.createElement('h3');h.textContent=group;out.appendChild(h);}
+        var d=document.createElement('div');d.className='r '+(r.ok?'p':'f');if(!r.ok)fail++;
+        d.innerHTML='<span class="s">'+(r.ok?'PASS':'FAIL')+'</span><span>'+r.name.replace(/</g,'&lt;')+(r.ok?'':'<br><small>'+String(r.msg).replace(/</g,'&lt;')+'</small>')+'</span>';out.appendChild(d);
+      });
+      sum.textContent=(res.length-fail)+' / '+res.length+' tests passed';sum.className='sum '+(fail?'bad':'ok');
+      document.getElementById('time').textContent=Math.round(performance.now()-t0)+' ms';
+      window.__testResult={total:res.length,failed:fail};
+    },30);
+  }
+  document.getElementById('rerun').onclick=run;run();
+})();
+</script></body></html>

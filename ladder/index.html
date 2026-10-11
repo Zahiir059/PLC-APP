@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ladder Logic Editor - Smart Beverage Plant PLC</title>
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../css/hmi.css">
+<style>body{overflow:auto}.lp{padding:10px;max-width:1700px;margin:0 auto}.lp .strip{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}.lp .strip .kv{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:3px 8px;font-size:12px}.lp .strip .kv b{font-family:var(--mono)}</style>
+</head>
+<body>
+<div class="hdr" style="padding:8px 14px"><span class="brand">Ladder Logic Editor<small>Smart Beverage Plant - PLC program</small></span><span class="crumbs">Edit rungs, then <b>Compile / Apply</b> to download into the running PLC.</span>
+  <button class="btn" id="role">Role: Engineer</button><button class="btn" id="theme">Dark / Light</button><a class="btn" style="text-decoration:none;display:inline-flex;align-items:center" href="../simulator/index.html">Open full HMI simulator</a><a class="btn" style="text-decoration:none;display:inline-flex;align-items:center" href="../index.html">Portfolio</a></div>
+<div class="lp">
+  <div class="strip" id="strip"></div>
+  <div id="editor"></div>
+</div>
+<script src="../js/config.js"></script><script src="../js/tags.js"></script><script src="../js/plc-engine.js"></script><script src="../js/process-model.js"></script><script src="../js/sim.js"></script>
+<script src="../js/alarms.js"></script><script src="../data/default-data.js"></script><script src="../js/storage.js"></script><script src="../js/production.js"></script><script src="../js/core.js"></script><script src="../js/ui.js"></script><script src="../js/ladder-editor.js"></script>
+<script>
+(function(){
+  'use strict'; const P=PLANT, U=P.UI, h=U.h;
+  P.session.user='engineer'; P.session.role='Engineer';
+  P.I18N.lang='en'; if(P.Store.get('theme','light')==='dark') document.documentElement.dataset.theme='dark';
+  const sim=P.boot(); sim.paused=false;
+  const ed=window.__ed=new P.LadderEditor(document.getElementById('editor'),{sim,canEdit:()=>P.session.canEdit(),saveProgram:p=>P.Prog.saveProgram(p)});
+  // quick operator strip so the ladder can be exercised without the HMI
+  const strip=document.getElementById('strip'); const kv=(l,t,d)=>{const s=h('span',{class:'kv'},l+' ',h('b',null,'-'));strip.appendChild(s);return ()=>{s.lastChild.textContent=U.fmt(sim.tags.get(t),d)}};
+  const b=(l,fn,c)=>strip.appendChild(h('button',{class:'btn '+(c||''),onclick:fn},l));
+  b('Start',()=>P.Op.pulse('M_START','Start'),'start');b('Stop',()=>P.Op.pulse('M_STOP','Stop'),'stopb');b('Reset trip',()=>P.Op.pulse('M_RESET','Reset'));
+  b('Auto / Manual',()=>P.Op.toggle('M_AUTO','Auto/Manual'));b('E-STOP',()=>P.Op.estop(),'estop');
+  const ups=[kv('Step','SEQ_STEP',0),kv('Temp','AI_TT201',1),kv('Weight','AI_WT103',1),kv('Cans','CAN_PACKED.CV',0),kv('Trip','TRIP',0)];
+  document.getElementById('role').onclick=()=>{const r=P.session.role==='Engineer'?'Operator':'Engineer';P.session.role=r;document.getElementById('role').textContent='Role: '+r;ed.refreshBar();ed.render();};
+  document.getElementById('theme').onclick=()=>{const d=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=d;P.Store.set('theme',d);};
+  P.bus.on('frame',()=>{ed.update();ups.forEach(f=>f());});
+  P.bus.on('xref',t=>U.toast('Cross-reference for '+t+' is available in the HMI simulator: I/O & PLC Logic > Cross-ref','info'));
+})();
+</script>
+</body></html>

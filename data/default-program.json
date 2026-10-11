@@ -1,0 +1,3271 @@
+{
+ "name": "Smart Beverage Plant - default program",
+ "version": 1,
+ "sections": [
+  {
+   "name": "Safety",
+   "desc": "Trip logic, permissives, beacons and horn. Runs first in every scan.",
+   "rungs": [
+    {
+     "comment": "Analog sensor fail (4-20 mA broken wire reads below -5 %): TT-201, LT-101, LT-102, LT-201",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "cmp",
+          "op": "<",
+          "a": "AI_TT201",
+          "b": -5
+         },
+         {
+          "t": "cmp",
+          "op": "<",
+          "a": "AI_LT101",
+          "b": -5
+         },
+         {
+          "t": "cmp",
+          "op": "<",
+          "a": "AI_LT102",
+          "b": -5
+         },
+         {
+          "t": "cmp",
+          "op": "<",
+          "a": "AI_LT201",
+          "b": -5
+         }
+        ]
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "SENSOR_FAIL"
+      }
+     ]
+    },
+    {
+     "comment": "Trip causes: E-stop, power loss, gas HH, over-temperature, over-pressure, sensor failure",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "nc",
+          "tag": "I_ESTOP_OK"
+         },
+         {
+          "t": "nc",
+          "tag": "I_MCC_OK"
+         },
+         {
+          "t": "no",
+          "tag": "I_GAS_ALARM"
+         },
+         {
+          "t": "cmp",
+          "op": ">=",
+          "a": "AI_TT201",
+          "b": "TT_HH"
+         },
+         {
+          "t": "cmp",
+          "op": ">=",
+          "a": "AI_PT201",
+          "b": "PT_HH"
+         },
+         {
+          "t": "no",
+          "tag": "SENSOR_FAIL"
+         }
+        ]
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "CAUSE_ACTIVE"
+      }
+     ]
+    },
+    {
+     "comment": "Trip latch - sets on any cause",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "CAUSE_ACTIVE"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "set",
+       "tag": "TRIP"
+      }
+     ]
+    },
+    {
+     "comment": "Trip reset - only when every cause has cleared (reset-last priority)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "M_RESET"
+       },
+       {
+        "t": "nc",
+        "tag": "CAUSE_ACTIVE"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "reset",
+       "tag": "TRIP"
+      }
+     ]
+    },
+    {
+     "comment": "Safety permissive for all outputs",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "nc",
+        "tag": "TRIP"
+       },
+       {
+        "t": "no",
+        "tag": "I_ESTOP_OK"
+       },
+       {
+        "t": "no",
+        "tag": "I_MCC_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "SAFE_OK"
+      }
+     ]
+    },
+    {
+     "comment": "Conveyor line fault: motor overload or jam",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "no",
+          "tag": "I_OL_CONV"
+         },
+         {
+          "t": "no",
+          "tag": "I_JAM"
+         }
+        ]
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "LINE_FAULT"
+      }
+     ]
+    },
+    {
+     "comment": "Alarm horn follows unacknowledged critical alarm",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "ALM_CRIT_UNACK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_HORN"
+      }
+     ]
+    },
+    {
+     "comment": "Beacon green = plant running and healthy",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "PLANT_RUN"
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_LAMP_G"
+      }
+     ]
+    },
+    {
+     "comment": "Beacon red = safety trip",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "no",
+          "tag": "TRIP"
+         },
+         {
+          "t": "nc",
+          "tag": "I_ESTOP_OK"
+         }
+        ]
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_LAMP_R"
+      }
+     ]
+    },
+    {
+     "comment": "Beacon amber = any alarm active",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "ALM_ANY"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_LAMP_A"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Sequence",
+   "desc": "Plant start/stop, Auto/Manual, and the main batch state machine (SEQ_STEP). Step transitions are written highest step first so only one step is taken per scan.",
+   "rungs": [
+    {
+     "comment": "Derived values: syrup target = batch kg x syrup % / 100",
+     "cond": {
+      "t": "ser",
+      "items": []
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "*",
+       "a": "REC_BATCH_KG",
+       "b": "REC_SYRUP_PCT",
+       "dest": "TMP_SYR"
+      }
+     ]
+    },
+    {
+     "comment": "",
+     "cond": {
+      "t": "ser",
+      "items": []
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "/",
+       "a": "TMP_SYR",
+       "b": 100,
+       "dest": "SYRUP_TARGET_KG"
+      }
+     ]
+    },
+    {
+     "comment": "Derived: pasteurization hold time in ms",
+     "cond": {
+      "t": "ser",
+      "items": []
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "*",
+       "a": "REC_HOLD_S",
+       "b": 1000,
+       "dest": "HOLD_MS"
+      }
+     ]
+    },
+    {
+     "comment": "Derived: fill time in ms = ml x 4 ms/ml",
+     "cond": {
+      "t": "ser",
+      "items": []
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "*",
+       "a": "REC_FILL_ML",
+       "b": "FILL_MS_PER_ML",
+       "dest": "FILL_TIME_MS"
+      }
+     ]
+    },
+    {
+     "comment": "Derived: minimum temperature for a valid pasteurization hold = SP - 3",
+     "cond": {
+      "t": "ser",
+      "items": []
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "-",
+       "a": "TT_SP",
+       "b": 3,
+       "dest": "TT_HOLD_MIN"
+      }
+     ]
+    },
+    {
+     "comment": "Order complete when packed cans reach the order target",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": ">",
+        "a": "ORDER_TARGET",
+        "b": 0
+       },
+       {
+        "t": "cmp",
+        "op": ">=",
+        "a": "CAN_PACKED.CV",
+        "b": "ORDER_TARGET"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "ORDER_DONE"
+      }
+     ]
+    },
+    {
+     "comment": "Plant run latch: SET by Start (Auto, healthy, order not done)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "M_START"
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       },
+       {
+        "t": "no",
+        "tag": "M_AUTO"
+       },
+       {
+        "t": "nc",
+        "tag": "ORDER_DONE"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "set",
+       "tag": "PLANT_RUN"
+      }
+     ]
+    },
+    {
+     "comment": "Plant run latch: RESET by Stop, trip, Manual mode or order done",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "no",
+          "tag": "M_STOP"
+         },
+         {
+          "t": "nc",
+          "tag": "SAFE_OK"
+         },
+         {
+          "t": "nc",
+          "tag": "M_AUTO"
+         },
+         {
+          "t": "no",
+          "tag": "ORDER_DONE"
+         }
+        ]
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "reset",
+       "tag": "PLANT_RUN"
+      }
+     ]
+    },
+    {
+     "comment": "Auto permissive",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "M_AUTO"
+       },
+       {
+        "t": "no",
+        "tag": "PLANT_RUN"
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "AUTO_OK"
+      }
+     ]
+    },
+    {
+     "comment": "Step 90 batch complete: wait 2 s",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 90
+       },
+       {
+        "t": "no",
+        "tag": "AUTO_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ton",
+       "tag": "T_BATCH_END",
+       "preset": 2000
+      }
+     ]
+    },
+    {
+     "comment": "90 -> 10  start next batch (order still open)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 90
+       },
+       {
+        "t": "no",
+        "tag": "T_BATCH_END.Q"
+       },
+       {
+        "t": "nc",
+        "tag": "ORDER_DONE"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "mov",
+       "a": 10,
+       "b": 0,
+       "dest": "SEQ_STEP"
+      }
+     ]
+    },
+    {
+     "comment": "Step 80 production: product exhausted (pasteurizer and filler bowl empty) for 3 s",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 80
+       },
+       {
+        "t": "no",
+        "tag": "AUTO_OK"
+       },
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_LT201",
+        "b": 2
+       },
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_LT301",
+        "b": 10
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ton",
+       "tag": "T_EMPTY",
+       "preset": 3000
+      }
+     ]
+    },
+    {
+     "comment": "80 -> 90  batch finished",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 80
+       },
+       {
+        "t": "no",
+        "tag": "T_EMPTY.Q"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "mov",
+       "a": 90,
+       "b": 0,
+       "dest": "SEQ_STEP"
+      }
+     ]
+    },
+    {
+     "comment": "Step 70 hold: temperature must stay >= SP-3 for the whole hold time (timer restarts otherwise)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 70
+       },
+       {
+        "t": "no",
+        "tag": "AUTO_OK"
+       },
+       {
+        "t": "cmp",
+        "op": ">=",
+        "a": "AI_TT201",
+        "b": "TT_HOLD_MIN"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ton",
+       "tag": "T_HOLD",
+       "preset": 0,
+       "presetTag": "HOLD_MS"
+      }
+     ]
+    },
+    {
+     "comment": "70 -> 80  pasteurization complete, start production",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 70
+       },
+       {
+        "t": "no",
+        "tag": "T_HOLD.Q"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "mov",
+       "a": 80,
+       "b": 0,
+       "dest": "SEQ_STEP"
+      }
+     ]
+    },
+    {
+     "comment": "Step 60 heat-up: at temperature for 3 s",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 60
+       },
+       {
+        "t": "no",
+        "tag": "AUTO_OK"
+       },
+       {
+        "t": "cmp",
+        "op": ">=",
+        "a": "AI_TT201",
+        "b": "TT_HOLD_MIN"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ton",
+       "tag": "T_AT_TEMP",
+       "preset": 3000
+      }
+     ]
+    },
+    {
+     "comment": "60 -> 70  start hold timer",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 60
+       },
+       {
+        "t": "no",
+        "tag": "T_AT_TEMP.Q"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "mov",
+       "a": 70,
+       "b": 0,
+       "dest": "SEQ_STEP"
+      }
+     ]
+    },
+    {
+     "comment": "Step 50 transfer: mixing tank empty for 1.5 s",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 50
+       },
+       {
+        "t": "no",
+        "tag": "AUTO_OK"
+       },
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_WT103",
+        "b": 0.5
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ton",
+       "tag": "T_TRANSFER_END",
+       "preset": 1500
+      }
+     ]
+    },
+    {
+     "comment": "50 -> 60  begin heating",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 50
+       },
+       {
+        "t": "no",
+        "tag": "T_TRANSFER_END.Q"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "mov",
+       "a": 60,
+       "b": 0,
+       "dest": "SEQ_STEP"
+      }
+     ]
+    },
+    {
+     "comment": "Step 40 mixing time 6 s",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 40
+       },
+       {
+        "t": "no",
+        "tag": "AUTO_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ton",
+       "tag": "T_MIX",
+       "preset": 6000
+      }
+     ]
+    },
+    {
+     "comment": "40 -> 50  transfer to pasteurizer",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 40
+       },
+       {
+        "t": "no",
+        "tag": "T_MIX.Q"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "mov",
+       "a": 50,
+       "b": 0,
+       "dest": "SEQ_STEP"
+      }
+     ]
+    },
+    {
+     "comment": "30 -> 40  water dosed, total weight reached",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 30
+       },
+       {
+        "t": "no",
+        "tag": "AUTO_OK"
+       },
+       {
+        "t": "cmp",
+        "op": ">=",
+        "a": "AI_WT103",
+        "b": "REC_BATCH_KG"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "mov",
+       "a": 40,
+       "b": 0,
+       "dest": "SEQ_STEP"
+      }
+     ]
+    },
+    {
+     "comment": "20 -> 30  syrup dosed (weighing)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 20
+       },
+       {
+        "t": "no",
+        "tag": "AUTO_OK"
+       },
+       {
+        "t": "cmp",
+        "op": ">=",
+        "a": "AI_WT103",
+        "b": "SYRUP_TARGET_KG"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "mov",
+       "a": 30,
+       "b": 0,
+       "dest": "SEQ_STEP"
+      }
+     ]
+    },
+    {
+     "comment": "Step 10 pre-check: tanks have material, mixer empty, room in pasteurizer",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 10
+       },
+       {
+        "t": "no",
+        "tag": "AUTO_OK"
+       },
+       {
+        "t": "cmp",
+        "op": ">",
+        "a": "AI_LT101",
+        "b": 20
+       },
+       {
+        "t": "cmp",
+        "op": ">",
+        "a": "AI_LT102",
+        "b": 20
+       },
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_WT103",
+        "b": 1
+       },
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_LT201",
+        "b": 50
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ton",
+       "tag": "T_PRECHECK",
+       "preset": 1500
+      }
+     ]
+    },
+    {
+     "comment": "Step 10: load recipe temperature into the loop setpoint",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 10
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "mov",
+       "a": "REC_TEMP_SP",
+       "b": 0,
+       "dest": "TT_SP"
+      }
+     ]
+    },
+    {
+     "comment": "10 -> 20  start syrup dosing",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 10
+       },
+       {
+        "t": "no",
+        "tag": "T_PRECHECK.Q"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "mov",
+       "a": 20,
+       "b": 0,
+       "dest": "SEQ_STEP"
+      }
+     ]
+    },
+    {
+     "comment": "0 -> 10  first batch",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 0
+       },
+       {
+        "t": "no",
+        "tag": "AUTO_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "mov",
+       "a": 10,
+       "b": 0,
+       "dest": "SEQ_STEP"
+      }
+     ]
+    },
+    {
+     "comment": "Production enabled while in step 80",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "AUTO_OK"
+       },
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 80
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "PROD_EN"
+      }
+     ]
+    },
+    {
+     "comment": "Batch counter (counts every entry into step 20)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 20
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ctu",
+       "tag": "BATCH_CNT",
+       "preset": 9999,
+       "reset": ""
+      }
+     ]
+    },
+    {
+     "comment": "Abort batch: back to step 0 (process drains product)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "M_ABORT"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "mov",
+       "a": 0,
+       "b": 0,
+       "dest": "SEQ_STEP"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tanks",
+   "desc": "Syrup (T-101) and water (T-102) tank level control with hysteresis, inlet valves and empty detection.",
+   "rungs": [
+    {
+     "comment": "Syrup tank refill latch: start below LT_LOW_SP",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_LT101",
+        "b": "LT_LOW_SP"
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "set",
+       "tag": "LV1_REFILL"
+      }
+     ]
+    },
+    {
+     "comment": "Syrup tank refill latch: stop above LT_HIGH_SP or on trip",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "cmp",
+          "op": ">=",
+          "a": "AI_LT101",
+          "b": "LT_HIGH_SP"
+         },
+         {
+          "t": "nc",
+          "tag": "SAFE_OK"
+         }
+        ]
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "reset",
+       "tag": "LV1_REFILL"
+      }
+     ]
+    },
+    {
+     "comment": "Syrup inlet valve XV-101 (auto level control or manual)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "no",
+          "tag": "LV1_REFILL"
+         },
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "nc",
+            "tag": "M_AUTO"
+           },
+           {
+            "t": "no",
+            "tag": "CMD_XV101"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       },
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_LT101",
+        "b": 99
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_XV101"
+      }
+     ]
+    },
+    {
+     "comment": "Water tank refill latch: start",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_LT102",
+        "b": "LT_LOW_SP"
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "set",
+       "tag": "LV2_REFILL"
+      }
+     ]
+    },
+    {
+     "comment": "Water tank refill latch: stop",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "cmp",
+          "op": ">=",
+          "a": "AI_LT102",
+          "b": "LT_HIGH_SP"
+         },
+         {
+          "t": "nc",
+          "tag": "SAFE_OK"
+         }
+        ]
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "reset",
+       "tag": "LV2_REFILL"
+      }
+     ]
+    },
+    {
+     "comment": "Water inlet valve XV-102",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "no",
+          "tag": "LV2_REFILL"
+         },
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "nc",
+            "tag": "M_AUTO"
+           },
+           {
+            "t": "no",
+            "tag": "CMD_XV102"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       },
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_LT102",
+        "b": 99
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_XV102"
+      }
+     ]
+    },
+    {
+     "comment": "Syrup tank empty (LL) - dry-run protection for P-101",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_LT101",
+        "b": 5
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "LSLL_101"
+      }
+     ]
+    },
+    {
+     "comment": "Water tank empty (LL) - dry-run protection for P-102",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_LT102",
+        "b": 5
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "LSLL_102"
+      }
+     ]
+    },
+    {
+     "comment": "Filler bowl empty (LL) - inhibits filling valve",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_LT301",
+        "b": 3
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "LSLL_301"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Mixing",
+   "desc": "Batch dosing by weight: syrup (step 20), water (step 30), agitator, mixing time (step 40) and transfer to the pasteurizer (step 50).",
+   "rungs": [
+    {
+     "comment": "Syrup pump P-101: step 20 until syrup weight reached; interlocks: overload, tank empty",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "no",
+            "tag": "AUTO_OK"
+           },
+           {
+            "t": "cmp",
+            "op": "==",
+            "a": "SEQ_STEP",
+            "b": 20
+           },
+           {
+            "t": "cmp",
+            "op": "<",
+            "a": "AI_WT103",
+            "b": "SYRUP_TARGET_KG"
+           }
+          ]
+         },
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "nc",
+            "tag": "M_AUTO"
+           },
+           {
+            "t": "no",
+            "tag": "CMD_P101"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       },
+       {
+        "t": "nc",
+        "tag": "I_OL_P101"
+       },
+       {
+        "t": "nc",
+        "tag": "LSLL_101"
+       },
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_WT103",
+        "b": 95
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_P101"
+      }
+     ]
+    },
+    {
+     "comment": "Syrup dosing valve XV-103 (opens with pump)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "no",
+            "tag": "AUTO_OK"
+           },
+           {
+            "t": "cmp",
+            "op": "==",
+            "a": "SEQ_STEP",
+            "b": 20
+           },
+           {
+            "t": "cmp",
+            "op": "<",
+            "a": "AI_WT103",
+            "b": "SYRUP_TARGET_KG"
+           }
+          ]
+         },
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "nc",
+            "tag": "M_AUTO"
+           },
+           {
+            "t": "no",
+            "tag": "CMD_XV103"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       },
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_WT103",
+        "b": 95
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_XV103"
+      }
+     ]
+    },
+    {
+     "comment": "Water pump P-102: step 30 until batch weight reached",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "no",
+            "tag": "AUTO_OK"
+           },
+           {
+            "t": "cmp",
+            "op": "==",
+            "a": "SEQ_STEP",
+            "b": 30
+           },
+           {
+            "t": "cmp",
+            "op": "<",
+            "a": "AI_WT103",
+            "b": "REC_BATCH_KG"
+           }
+          ]
+         },
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "nc",
+            "tag": "M_AUTO"
+           },
+           {
+            "t": "no",
+            "tag": "CMD_P102"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       },
+       {
+        "t": "nc",
+        "tag": "I_OL_P102"
+       },
+       {
+        "t": "nc",
+        "tag": "LSLL_102"
+       },
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_WT103",
+        "b": 95
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_P102"
+      }
+     ]
+    },
+    {
+     "comment": "Water dosing valve XV-104",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "no",
+            "tag": "AUTO_OK"
+           },
+           {
+            "t": "cmp",
+            "op": "==",
+            "a": "SEQ_STEP",
+            "b": 30
+           },
+           {
+            "t": "cmp",
+            "op": "<",
+            "a": "AI_WT103",
+            "b": "REC_BATCH_KG"
+           }
+          ]
+         },
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "nc",
+            "tag": "M_AUTO"
+           },
+           {
+            "t": "no",
+            "tag": "CMD_XV104"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       },
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_WT103",
+        "b": 95
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_XV104"
+      }
+     ]
+    },
+    {
+     "comment": "Agitator M-103: steps 30-50, only when there is liquid in the tank",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "no",
+            "tag": "AUTO_OK"
+           },
+           {
+            "t": "cmp",
+            "op": ">=",
+            "a": "SEQ_STEP",
+            "b": 30
+           },
+           {
+            "t": "cmp",
+            "op": "<=",
+            "a": "SEQ_STEP",
+            "b": 50
+           }
+          ]
+         },
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "nc",
+            "tag": "M_AUTO"
+           },
+           {
+            "t": "no",
+            "tag": "CMD_AGIT"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       },
+       {
+        "t": "cmp",
+        "op": ">",
+        "a": "AI_WT103",
+        "b": 2
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_AGIT"
+      }
+     ]
+    },
+    {
+     "comment": "Transfer pump P-103: step 50, pasteurizer not full",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "no",
+            "tag": "AUTO_OK"
+           },
+           {
+            "t": "cmp",
+            "op": "==",
+            "a": "SEQ_STEP",
+            "b": 50
+           },
+           {
+            "t": "cmp",
+            "op": "<",
+            "a": "AI_LT201",
+            "b": 95
+           }
+          ]
+         },
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "nc",
+            "tag": "M_AUTO"
+           },
+           {
+            "t": "no",
+            "tag": "CMD_P103"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       },
+       {
+        "t": "cmp",
+        "op": ">",
+        "a": "AI_WT103",
+        "b": 0.2
+       },
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_LT201",
+        "b": 98
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_P103"
+      }
+     ]
+    },
+    {
+     "comment": "Mixer discharge valve XV-105",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "no",
+            "tag": "AUTO_OK"
+           },
+           {
+            "t": "cmp",
+            "op": "==",
+            "a": "SEQ_STEP",
+            "b": 50
+           },
+           {
+            "t": "cmp",
+            "op": "<",
+            "a": "AI_LT201",
+            "b": 95
+           }
+          ]
+         },
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "nc",
+            "tag": "M_AUTO"
+           },
+           {
+            "t": "no",
+            "tag": "CMD_XV105"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_XV105"
+      }
+     ]
+    },
+    {
+     "comment": "Dosing timeout - syrup (40 s)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 20
+       },
+       {
+        "t": "no",
+        "tag": "AUTO_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ton",
+       "tag": "T_DOSE_SYR",
+       "preset": 40000
+      }
+     ]
+    },
+    {
+     "comment": "Dosing timeout - water (40 s)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "==",
+        "a": "SEQ_STEP",
+        "b": 30
+       },
+       {
+        "t": "no",
+        "tag": "AUTO_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ton",
+       "tag": "T_DOSE_WTR",
+       "preset": 40000
+      }
+     ]
+    },
+    {
+     "comment": "Dosing fault bit for the alarm server",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "no",
+          "tag": "T_DOSE_SYR.Q"
+         },
+         {
+          "t": "no",
+          "tag": "T_DOSE_WTR.Q"
+         }
+        ]
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "DOSE_FAULT"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Heating",
+   "desc": "Pasteurizer heater contactor and the temperature PID loop (steps 60-80). Loop can be put in manual from the HMI.",
+   "rungs": [
+    {
+     "comment": "Heater contactor K-201: needs liquid over the element and temperature below the HH limit",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "no",
+            "tag": "AUTO_OK"
+           },
+           {
+            "t": "cmp",
+            "op": ">=",
+            "a": "SEQ_STEP",
+            "b": 60
+           },
+           {
+            "t": "cmp",
+            "op": "<=",
+            "a": "SEQ_STEP",
+            "b": 80
+           }
+          ]
+         },
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "nc",
+            "tag": "M_AUTO"
+           },
+           {
+            "t": "no",
+            "tag": "CMD_HEATER"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       },
+       {
+        "t": "cmp",
+        "op": ">",
+        "a": "AI_LT201",
+        "b": 3
+       },
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_TT201",
+        "b": "TT_HH"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_HEATER"
+      }
+     ]
+    },
+    {
+     "comment": "Temperature PID: PV=TT-201, output = heater power %",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "Q_HEATER"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "pid",
+       "tag": "PID_TEMP",
+       "pv": "AI_TT201",
+       "sp": "TT_SP",
+       "out": "AO_HEATER",
+       "kp": "KP_TEMP",
+       "ki": "KI_TEMP",
+       "kd": "KD_TEMP",
+       "auto": "PID_AUTO",
+       "man": "PID_MAN_OUT",
+       "min": 0,
+       "max": 100
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Filling",
+   "desc": "Filler bowl feed pump, filling and capping stations. Each station: sensor -> request -> timer -> done latch (reset when the can leaves).",
+   "rungs": [
+    {
+     "comment": "Filler bowl feed request: start below 55 %",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_LT301",
+        "b": 55
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "set",
+       "tag": "FEED_REQ"
+      }
+     ]
+    },
+    {
+     "comment": "Filler bowl feed request: stop above 90 %",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "cmp",
+        "op": ">=",
+        "a": "AI_LT301",
+        "b": 90
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "reset",
+       "tag": "FEED_REQ"
+      }
+     ]
+    },
+    {
+     "comment": "Filler feed pump P-104",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "no",
+            "tag": "AUTO_OK"
+           },
+           {
+            "t": "cmp",
+            "op": "==",
+            "a": "SEQ_STEP",
+            "b": 80
+           },
+           {
+            "t": "no",
+            "tag": "FEED_REQ"
+           }
+          ]
+         },
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "nc",
+            "tag": "M_AUTO"
+           },
+           {
+            "t": "no",
+            "tag": "CMD_P104"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       },
+       {
+        "t": "cmp",
+        "op": ">",
+        "a": "AI_LT201",
+        "b": 1.5
+       },
+       {
+        "t": "cmp",
+        "op": "<",
+        "a": "AI_LT301",
+        "b": 95
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_P104"
+      }
+     ]
+    },
+    {
+     "comment": "Filler station request: can present, not yet filled",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "DI_PE301"
+       },
+       {
+        "t": "nc",
+        "tag": "FILL_DONE"
+       },
+       {
+        "t": "no",
+        "tag": "PROD_EN"
+       },
+       {
+        "t": "nc",
+        "tag": "LINE_FAULT"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "FILL_REQ"
+      }
+     ]
+    },
+    {
+     "comment": "Fill timer (duration from recipe volume)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "FILL_REQ"
+       },
+       {
+        "t": "nc",
+        "tag": "LSLL_301"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ton",
+       "tag": "T_FILL",
+       "preset": 0,
+       "presetTag": "FILL_TIME_MS"
+      }
+     ]
+    },
+    {
+     "comment": "Filling valve FV-301",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "FILL_REQ"
+       },
+       {
+        "t": "nc",
+        "tag": "T_FILL.Q"
+       },
+       {
+        "t": "nc",
+        "tag": "LSLL_301"
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_FILL"
+      }
+     ]
+    },
+    {
+     "comment": "Can filled -> latch done (releases the conveyor)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "T_FILL.Q"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "set",
+       "tag": "FILL_DONE"
+      }
+     ]
+    },
+    {
+     "comment": "Filled latch resets when the can has left the station",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "nc",
+        "tag": "DI_PE301"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "reset",
+       "tag": "FILL_DONE"
+      }
+     ]
+    },
+    {
+     "comment": "Capper station request",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "DI_PE302"
+       },
+       {
+        "t": "nc",
+        "tag": "CAP_DONE"
+       },
+       {
+        "t": "no",
+        "tag": "PROD_EN"
+       },
+       {
+        "t": "nc",
+        "tag": "LINE_FAULT"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "CAP_REQ"
+      }
+     ]
+    },
+    {
+     "comment": "Capping timer 0.8 s",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "CAP_REQ"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ton",
+       "tag": "T_CAP",
+       "preset": 800
+      }
+     ]
+    },
+    {
+     "comment": "Capper press CP-302",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "CAP_REQ"
+       },
+       {
+        "t": "nc",
+        "tag": "T_CAP.Q"
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_CAP"
+      }
+     ]
+    },
+    {
+     "comment": "Can capped -> latch done",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "T_CAP.Q"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "set",
+       "tag": "CAP_DONE"
+      }
+     ]
+    },
+    {
+     "comment": "Capped latch resets when the can has left",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "nc",
+        "tag": "DI_PE302"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "reset",
+       "tag": "CAP_DONE"
+      }
+     ]
+    },
+    {
+     "comment": "Counter: cans filled (this order)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "FILL_DONE"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ctu",
+       "tag": "FILL_CNT",
+       "preset": 32000,
+       "reset": "M_NEW_ORDER"
+      }
+     ]
+    },
+    {
+     "comment": "Counter: cans capped (this order)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "CAP_DONE"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ctu",
+       "tag": "CAP_CNT",
+       "preset": 32000,
+       "reset": "M_NEW_ORDER"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Conveyor",
+   "desc": "Conveyor motor M-401 with VFD speed control, stop-and-go while any station is working, empty-can infeed.",
+   "rungs": [
+    {
+     "comment": "Conveyor hold while filler, capper or labeler is busy",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "no",
+          "tag": "FILL_REQ"
+         },
+         {
+          "t": "no",
+          "tag": "CAP_REQ"
+         },
+         {
+          "t": "no",
+          "tag": "LBL_REQ"
+         }
+        ]
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "CONV_HOLD"
+      }
+     ]
+    },
+    {
+     "comment": "Conveyor motor run: auto in step 80 (not held), or manual command",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "no",
+            "tag": "PROD_EN"
+           },
+           {
+            "t": "nc",
+            "tag": "CONV_HOLD"
+           }
+          ]
+         },
+         {
+          "t": "ser",
+          "items": [
+           {
+            "t": "nc",
+            "tag": "M_AUTO"
+           },
+           {
+            "t": "no",
+            "tag": "CMD_CONV"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       },
+       {
+        "t": "nc",
+        "tag": "LINE_FAULT"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_CONV"
+      }
+     ]
+    },
+    {
+     "comment": "Empty-can infeed gate opens while the conveyor runs",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "Q_CONV"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_FEEDER"
+      }
+     ]
+    },
+    {
+     "comment": "VFD speed reference = speed setpoint x run bit",
+     "cond": {
+      "t": "ser",
+      "items": []
+     },
+     "outs": [
+      {
+       "t": "math",
+       "op": "*",
+       "a": "CONV_SPEED_SP",
+       "b": "Q_CONV",
+       "dest": "AO_CONV_SPD"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Inspection",
+   "desc": "Camera inspection (fill level, cap present, product temperature) and reject pusher RP-401.",
+   "rungs": [
+    {
+     "comment": "Reject pusher pulse (0.6 s) on a FAIL result edge",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "pos",
+        "tag": "DI_INSP_FAIL"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "tp",
+       "tag": "T_REJ1",
+       "preset": 600
+      }
+     ]
+    },
+    {
+     "comment": "Reject pusher RP-401",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "T_REJ1.Q"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_REJ1"
+      }
+     ]
+    },
+    {
+     "comment": "Counter: cans inspected",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "DI_PE401"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ctu",
+       "tag": "INSP_CNT",
+       "preset": 32000,
+       "reset": "M_NEW_ORDER"
+      }
+     ]
+    },
+    {
+     "comment": "Counter: rejects at inspection",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "Q_REJ1"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ctu",
+       "tag": "REJ1_CNT",
+       "preset": 32000,
+       "reset": "M_NEW_ORDER"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Packaging",
+   "desc": "Labeler, label verification + reject, carton packing with can counting, and barcode scan counter.",
+   "rungs": [
+    {
+     "comment": "Labeler station request",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "DI_PE501"
+       },
+       {
+        "t": "nc",
+        "tag": "LBL_DONE"
+       },
+       {
+        "t": "no",
+        "tag": "PROD_EN"
+       },
+       {
+        "t": "nc",
+        "tag": "LINE_FAULT"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "LBL_REQ"
+      }
+     ]
+    },
+    {
+     "comment": "Labeling timer 0.6 s",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "LBL_REQ"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ton",
+       "tag": "T_LBL",
+       "preset": 600
+      }
+     ]
+    },
+    {
+     "comment": "Labeler LB-501",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "LBL_REQ"
+       },
+       {
+        "t": "nc",
+        "tag": "T_LBL.Q"
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_LABEL"
+      }
+     ]
+    },
+    {
+     "comment": "Can labelled -> latch done",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "T_LBL.Q"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "set",
+       "tag": "LBL_DONE"
+      }
+     ]
+    },
+    {
+     "comment": "Labelled latch resets when the can has left",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "nc",
+        "tag": "DI_PE501"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "reset",
+       "tag": "LBL_DONE"
+      }
+     ]
+    },
+    {
+     "comment": "Counter: cans labelled",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "LBL_DONE"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ctu",
+       "tag": "LBL_CNT",
+       "preset": 32000,
+       "reset": "M_NEW_ORDER"
+      }
+     ]
+    },
+    {
+     "comment": "Label verification FAIL -> reject pusher RP-502 pulse",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "pos",
+        "tag": "DI_LBL_FAIL"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "tp",
+       "tag": "T_REJ2",
+       "preset": 600
+      }
+     ]
+    },
+    {
+     "comment": "Reject pusher RP-502",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "T_REJ2.Q"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_REJ2"
+      }
+     ]
+    },
+    {
+     "comment": "Counter: rejects at label check",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "Q_REJ2"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ctu",
+       "tag": "REJ2_CNT",
+       "preset": 32000,
+       "reset": "M_NEW_ORDER"
+      }
+     ]
+    },
+    {
+     "comment": "Counter: good cans delivered to the packer (order progress)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "DI_PE601"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ctu",
+       "tag": "CAN_PACKED",
+       "preset": 32000,
+       "reset": "M_NEW_ORDER"
+      }
+     ]
+    },
+    {
+     "comment": "Cans-per-carton counter (preset from recipe); reset by CTN_RST",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "DI_PE601"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ctu",
+       "tag": "CTN_CANS",
+       "preset": 0,
+       "presetTag": "REC_CANS_CTN",
+       "reset": "CTN_RST"
+      }
+     ]
+    },
+    {
+     "comment": "Carton full -> reset the can counter one scan later (or new order)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "no",
+          "tag": "CTN_CANS.Q"
+         },
+         {
+          "t": "no",
+          "tag": "M_NEW_ORDER"
+         }
+        ]
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "CTN_RST"
+      }
+     ]
+    },
+    {
+     "comment": "Carton full -> packer pulse 1.5 s",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "pos",
+        "tag": "CTN_CANS.Q"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "tp",
+       "tag": "T_CARTON",
+       "preset": 1500
+      }
+     ]
+    },
+    {
+     "comment": "Carton packer CK-601",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "T_CARTON.Q"
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_CARTON"
+      }
+     ]
+    },
+    {
+     "comment": "Barcode scan counter (cartons scanned)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "DI_BARCODE"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ctu",
+       "tag": "BARCODE_CNT",
+       "preset": 32000,
+       "reset": "M_NEW_ORDER"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Palletizing",
+   "desc": "Palletizer robot, cartons-per-pallet counting and stretch wrapping.",
+   "rungs": [
+    {
+     "comment": "Palletizer pulse per carton arrival",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "pos",
+        "tag": "DI_PE701"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "tp",
+       "tag": "T_PLT",
+       "preset": 1000
+      }
+     ]
+    },
+    {
+     "comment": "Palletizer robot PZ-701",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "T_PLT.Q"
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_PALLETIZER"
+      }
+     ]
+    },
+    {
+     "comment": "Cartons-on-pallet counter (preset from recipe)",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "DI_PE701"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ctu",
+       "tag": "CTN_PALLET",
+       "preset": 0,
+       "presetTag": "REC_CTN_PLT",
+       "reset": "PLT_RST"
+      }
+     ]
+    },
+    {
+     "comment": "Pallet full -> wrap cycle 4 s",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "pos",
+        "tag": "CTN_PALLET.Q"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "tp",
+       "tag": "T_WRAP",
+       "preset": 4000
+      }
+     ]
+    },
+    {
+     "comment": "Pallet wrapper WR-702",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "T_WRAP.Q"
+       },
+       {
+        "t": "no",
+        "tag": "SAFE_OK"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "Q_WRAP"
+      }
+     ]
+    },
+    {
+     "comment": "Wrap finished (falling edge) -> pallet counter and reset carton count",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "neg",
+        "tag": "T_WRAP.Q"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "ctu",
+       "tag": "PALLET_CNT",
+       "preset": 9999,
+       "reset": "M_NEW_ORDER"
+      }
+     ]
+    },
+    {
+     "comment": "Reset cartons-on-pallet at wrap end or new order",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "par",
+        "items": [
+         {
+          "t": "neg",
+          "tag": "T_WRAP.Q"
+         },
+         {
+          "t": "no",
+          "tag": "M_NEW_ORDER"
+         }
+        ]
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "coil",
+       "tag": "PLT_RST"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Housekeeping",
+   "desc": "Clears momentary HMI command bits at the END of the scan so every rung has seen them exactly once.",
+   "rungs": [
+    {
+     "comment": "Clear Start",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "M_START"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "reset",
+       "tag": "M_START"
+      }
+     ]
+    },
+    {
+     "comment": "Clear Stop",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "M_STOP"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "reset",
+       "tag": "M_STOP"
+      }
+     ]
+    },
+    {
+     "comment": "Clear Reset",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "M_RESET"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "reset",
+       "tag": "M_RESET"
+      }
+     ]
+    },
+    {
+     "comment": "Clear Abort",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "M_ABORT"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "reset",
+       "tag": "M_ABORT"
+      }
+     ]
+    },
+    {
+     "comment": "Clear New order",
+     "cond": {
+      "t": "ser",
+      "items": [
+       {
+        "t": "no",
+        "tag": "M_NEW_ORDER"
+       }
+      ]
+     },
+     "outs": [
+      {
+       "t": "reset",
+       "tag": "M_NEW_ORDER"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "sfc": {
+  "title": "Main plant sequence (GRAFCET)",
+  "tag": "SEQ_STEP",
+  "steps": [
+   {
+    "n": 0,
+    "name": "IDLE",
+    "act": "All batch equipment off"
+   },
+   {
+    "n": 10,
+    "name": "PRE-CHECK",
+    "act": "Check tank levels; load recipe setpoint"
+   },
+   {
+    "n": 20,
+    "name": "DOSE SYRUP",
+    "act": "P-101 + XV-103 until syrup weight"
+   },
+   {
+    "n": 30,
+    "name": "DOSE WATER",
+    "act": "P-102 + XV-104 + agitator until batch weight"
+   },
+   {
+    "n": 40,
+    "name": "MIX",
+    "act": "Agitator for mixing time"
+   },
+   {
+    "n": 50,
+    "name": "TRANSFER",
+    "act": "P-103 + XV-105 to pasteurizer"
+   },
+   {
+    "n": 60,
+    "name": "HEAT-UP",
+    "act": "Heater + PID to setpoint"
+   },
+   {
+    "n": 70,
+    "name": "HOLD",
+    "act": "Hold temperature for the recipe time"
+   },
+   {
+    "n": 80,
+    "name": "PRODUCE",
+    "act": "Feed filler, run line"
+   },
+   {
+    "n": 90,
+    "name": "BATCH COMPLETE",
+    "act": "Close batch record"
+   }
+  ],
+  "trans": [
+   {
+    "from": 0,
+    "to": 10,
+    "cond": "AUTO_OK"
+   },
+   {
+    "from": 10,
+    "to": 20,
+    "cond": "Levels OK for 1.5 s"
+   },
+   {
+    "from": 20,
+    "to": 30,
+    "cond": "WT-103 >= syrup target"
+   },
+   {
+    "from": 30,
+    "to": 40,
+    "cond": "WT-103 >= batch kg"
+   },
+   {
+    "from": 40,
+    "to": 50,
+    "cond": "Mix timer done"
+   },
+   {
+    "from": 50,
+    "to": 60,
+    "cond": "WT-103 < 0.5 kg"
+   },
+   {
+    "from": 60,
+    "to": 70,
+    "cond": "TT-201 >= SP-3 for 3 s"
+   },
+   {
+    "from": 70,
+    "to": 80,
+    "cond": "Hold timer done"
+   },
+   {
+    "from": 80,
+    "to": 90,
+    "cond": "Tanks empty for 3 s"
+   },
+   {
+    "from": 90,
+    "to": 10,
+    "cond": "Order not complete"
+   }
+  ],
+  "note": "Abort (M_ABORT) returns to step 0 from any step. Trip / Stop freezes the step; Start resumes."
+ }
+}

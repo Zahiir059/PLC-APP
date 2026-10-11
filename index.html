@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Beverage Filling &amp; Packaging Plant - PLC + HMI/SCADA Simulator | Zaheer Abbas</title>
+<meta name="description" content="Portfolio project by Zaheer Abbas: a browser-based PLC (ladder logic) and HMI/SCADA simulator of a beverage filling and packaging plant. Editable ladder, ISA-101 HMI, ISA-18.2 alarms, no install.">
+<meta name="theme-color" content="#0e1319">
+<meta property="og:title" content="Smart Beverage Plant - PLC + HMI/SCADA Simulator">
+<meta property="og:description" content="Edit ladder logic live and operate a simulated beverage plant in your browser.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="logo" href="#top">PLC<b>/</b>HMI &middot; BEVERAGE</a>
+  <nav aria-label="Sections"><a href="#features">Features</a><a href="#architecture">Architecture</a><a href="#stack">Tech stack</a><a href="#screens">Screenshots</a><a href="#about">About</a></nav>
+  <a class="btn pri sm" href="simulator/index.html">Launch Simulator</a>
+</div></header>
+
+<main id="top">
+<section class="hero"><div class="wrap grid">
+  <div>
+    <div class="tag">Industrial automation portfolio project</div>
+    <h1>Smart Beverage Filling &amp; Packaging Plant<br><span>PLC + HMI/SCADA Simulator</span></h1>
+    <p class="lead">A complete plant in your browser: a real PLC scan-cycle engine, an <b>editable ladder diagram</b> with live power flow, a physical process model, and an ISA-101 style SCADA with ISA-18.2 alarm management. Static site &mdash; no backend, no install.</p>
+    <div class="cta"><a class="btn pri" href="simulator/index.html">&#9654; Launch Simulator</a><a class="btn" href="ladder/index.html">&#9776; View Ladder Logic</a><a class="btn" href="tests.html">&#10003; Run self-tests</a></div>
+    <div class="by">Built by <b>Zaheer Abbas</b> &mdash; Electrical Engineer (FAST-NUCES) &middot; PLC &middot; SCADA/HMI &middot; Industrial automation</div>
+  </div>
+  <div class="rungs" aria-hidden="true">
+    <div class="t"><span>SAFETY / rung 5</span><span>RUN &#9679;</span></div>
+    <div class="rung"><i class="rail"></i><i class="wire on"></i><span class="el on">&#9508;/&#9500; TRIP</span><i class="wire on"></i><span class="el on">&#9508; &#9500; I_ESTOP_OK</span><i class="wire on"></i><span class="el on">&#9508; &#9500; I_MCC_OK</span><i class="wire on"></i><span class="el on coil">( SAFE_OK )</span><i class="wire on"></i><i class="rail"></i></div>
+    <div class="t" style="margin-top:12px"><span>FILLING / rung 5</span><span>TON T_FILL</span></div>
+    <div class="rung"><i class="rail"></i><i class="wire on"></i><span class="el on">&#9508; &#9500; FILL_REQ</span><i class="wire on"></i><span class="el">&#9508;/&#9500; LSLL_301</span><i class="wire on"></i><span class="el on">[ TON 1320ms ]</span><i class="wire"></i><i class="rail"></i></div>
+    <div class="t" style="margin-top:12px"><span>SEQUENCE / rung 12</span><span>SEQ_STEP == 60</span></div>
+    <div class="rung"><i class="rail"></i><i class="wire"></i><span class="el">TT-201 &gt;= SP-3</span><i class="wire"></i><span class="el">[ TON 3000 ]</span><i class="wire"></i><span class="el coil">MOV 70</span><i class="wire"></i><i class="rail"></i></div>
+  </div>
+</div>
+<div class="wrap"><div class="stats" id="stats">
+  <div class="stat"><b>11</b><span>ladder sections</span></div><div class="stat"><b>111</b><span>rungs in the default program</span></div><div class="stat"><b>133</b><span>tags (editable, CSV)</span></div>
+  <div class="stat"><b>27</b><span>HMI / engineering screens</span></div><div class="stat"><b>28</b><span>ISA-18.2 alarms</span></div><div class="stat"><b>49</b><span>automated self-tests</span></div>
+</div></div></section>
+
+<section id="process"><div class="wrap">
+  <h2>The process</h2><p class="sub">Every stage is simulated and controlled by the ladder program, from raw material to wrapped pallets.</p>
+  <div class="flow"><span class="chip">Syrup / water tanks</span><span class="arr">&rarr;</span><span class="chip">Batch mixing (weighing)</span><span class="arr">&rarr;</span><span class="chip">Pasteurization (PID)</span><span class="arr">&rarr;</span><span class="chip">Filling</span><span class="arr">&rarr;</span><span class="chip">Capping</span><span class="arr">&rarr;</span><span class="chip">Conveyor (VFD)</span><span class="arr">&rarr;</span><span class="chip">Inspection &amp; reject</span><span class="arr">&rarr;</span><span class="chip">Labeling</span><span class="arr">&rarr;</span><span class="chip">Carton packing</span><span class="arr">&rarr;</span><span class="chip">Palletizing &amp; wrap</span></div>
+</div></section>
+
+<section id="features"><div class="wrap">
+  <h2>Features</h2><p class="sub">Built to show real PLC and SCADA engineering practice, not just animation.</p>
+  <div class="cards">
+    <div class="card"><div class="ic">&#9881;</div><h3>PLC scan-cycle engine</h3><p>Read inputs &rarr; execute logic &rarr; write outputs with adjustable scan time. NO/NC contacts, edge contacts, coils, set/reset, TON/TOF/TP, CTU/CTD, comparators, math, PID, interlocks and a state-machine sequencer.</p></div>
+    <div class="card"><div class="ic">&#9776;</div><h3>Editable ladder editor</h3><p>SVG ladder with live power flow and live timer/counter values. Drag &amp; drop, parallel branches, undo/redo, online edit with a Compile/Apply check, JSON save/load, FBD, SFC/GRAFCET and Structured Text views.</p></div>
+    <div class="card"><div class="ic">&#9638;</div><h3>ISA-101 HMI / SCADA</h3><p>Animated overview, P&amp;ID with ISA symbols, faceplates, PID tuning with auto-tune demo, trends with historian zoom/pan, light/dark theme, English/Urdu, mobile operator panel, screen lock and auto-logout.</p></div>
+    <div class="card"><div class="ic">&#9888;</div><h3>ISA-18.2 alarms</h3><p>Four priorities, acknowledge states, shelving, suppression, first-out, flood detection, alarm KPIs and a cause &amp; effect matrix tied to the real interlock logic.</p></div>
+    <div class="card"><div class="ic">&#9783;</div><h3>Production &amp; quality</h3><p>Recipe manager, production orders that stop the plant at target, batch genealogy with carton/pallet barcodes, SPC, reject reasons, downtime Pareto, bottleneck analysis, OEE.</p></div>
+    <div class="card"><div class="ic">&#9889;</div><h3>Energy &amp; maintenance</h3><p>kWh per machine, cost per batch with an editable PKR tariff, peak demand, power factor, equipment health with predictive warnings and a maintenance schedule.</p></div>
+    <div class="card"><div class="ic">&#128196;</div><h3>Engineering tools</h3><p>Tag database with CSV, watch &amp; force tables, cross-reference, tag search/replace, version snapshots with compare/restore, printable listings, Modbus TCP map and frame builder, audit trail.</p></div>
+    <div class="card"><div class="ic">&#127891;</div><h3>Training mode</h3><p>One-click fault scenarios (sensor failure, pump trip, power loss, jam, overheating, gas leak, empty tank) with the expected PLC response, guided exercises with a score, and a first-launch tour.</p></div>
+  </div>
+</div></section>
+
+<section id="architecture"><div class="wrap">
+  <h2>Architecture</h2><p class="sub">PLC, HMI and field devices are separate modules that talk only through the tag database &mdash; like a real control system.</p>
+  <div class="arch"><svg viewBox="0 0 1000 300" role="img" aria-label="Architecture diagram: field devices to PLC to HMI over simulated Modbus TCP" width="100%">
+    <style>.b{fill:#18212b;stroke:#3a4755;stroke-width:2}.p{fill:#16283a;stroke:#58a6ff}.h{fill:#13281f;stroke:#3ddc84}.t{fill:#e8edf2;font:700 14px sans-serif}.s{fill:#93a1af;font:12px sans-serif}.l{stroke:#ffb020;stroke-width:3;fill:none}.k{fill:#ffb020}</style>
+    <rect class="b" x="10" y="40" width="230" height="170" rx="10"/><text class="t" x="125" y="70" text-anchor="middle">Field devices</text><text class="s" x="125" y="98" text-anchor="middle">Sensors: LT, TT, PT, WT, PE</text><text class="s" x="125" y="118" text-anchor="middle">Pumps, valves, heater, VFD</text><text class="s" x="125" y="138" text-anchor="middle">Process model (JS physics)</text><text class="s" x="125" y="158" text-anchor="middle">Fault injection</text>
+    <rect class="b p" x="380" y="20" width="250" height="210" rx="10"/><text class="t" x="505" y="50" text-anchor="middle">PLC engine (JavaScript)</text><text class="s" x="505" y="80" text-anchor="middle">read inputs &#8594; logic &#8594; write outputs</text><text class="s" x="505" y="102" text-anchor="middle">Ladder: 11 sections / 111 rungs</text><text class="s" x="505" y="124" text-anchor="middle">TON/TOF/TP &#183; CTU/CTD &#183; PID &#183; math</text><text class="s" x="505" y="146" text-anchor="middle">State machine + interlocks</text><text class="s" x="505" y="168" text-anchor="middle">Tag DB + forces + online edit</text>
+    <rect class="b h" x="770" y="40" width="220" height="170" rx="10"/><text class="t" x="880" y="70" text-anchor="middle">HMI / SCADA</text><text class="s" x="880" y="98" text-anchor="middle">ISA-101 screens, faceplates</text><text class="s" x="880" y="118" text-anchor="middle">Alarms, trends, reports</text><text class="s" x="880" y="138" text-anchor="middle">Roles: Operator / Engineer / Admin</text><text class="s" x="880" y="158" text-anchor="middle">Historian (IndexedDB), PWA</text>
+    <path class="l" d="M240 110H380"/><path class="l" d="M630 110H770"/><text class="s" x="310" y="100" text-anchor="middle">I/O</text><text class="s" x="700" y="100" text-anchor="middle">Modbus TCP (sim.)</text>
+    <circle class="k" r="5"><animateMotion dur="2s" repeatCount="indefinite" path="M240 110H380"/></circle><circle class="k" r="5"><animateMotion dur="1.6s" repeatCount="indefinite" path="M630 110H770"/></circle>
+    <text class="s" x="500" y="270" text-anchor="middle">Static website &#8212; everything runs in the browser, data stays in localStorage / IndexedDB</text></svg></div>
+</div></section>
+
+<section id="stack"><div class="wrap">
+  <h2>Tech stack &amp; highlights</h2><p class="sub">No frameworks, no build step, no backend. Open <code>index.html</code> directly or host it on GitHub Pages.</p>
+  <div class="stack"><span>HTML5</span><span>CSS3 (variables, grid)</span><span>Vanilla JavaScript</span><span>SVG animation</span><span>Canvas charts (own library)</span><span>IndexedDB historian</span><span>localStorage</span><span>Service Worker (PWA)</span><span>IEC 61131-3 concepts</span><span>ISA-101 / ISA-18.2 / ISA-5.1</span><span>Modbus TCP (simulated)</span></div>
+  <ul class="feat" style="margin-top:22px"><li>Works offline once installed as a PWA.</li><li>Process model and PLC are decoupled: only tags connect them.</li><li>Automated self-tests for engine, interlocks, alarms and counters.</li><li>Feature flags in <code>js/config.js</code> switch modules on or off.</li></ul>
+</div></section>
+
+<section id="screens"><div class="wrap">
+  <h2>Screenshots</h2><p class="sub">Replace these placeholders with your own screenshots or a GIF: save files as <code>assets/screenshots/overview.png</code> etc. (see README).</p>
+  <div class="shots">
+    <div class="shot"><img src="assets/screenshots/overview.png" alt="Plant overview screenshot" onerror="this.replaceWith(Object.assign(document.createElement('div'),{innerHTML:'Plant overview<br><code>assets/screenshots/overview.png</code>'}))"></div>
+    <div class="shot"><img src="assets/screenshots/ladder.png" alt="Ladder editor screenshot" onerror="this.replaceWith(Object.assign(document.createElement('div'),{innerHTML:'Ladder editor with live power flow<br><code>assets/screenshots/ladder.png</code>'}))"></div>
+    <div class="shot"><img src="assets/screenshots/alarms.png" alt="Alarm management screenshot" onerror="this.replaceWith(Object.assign(document.createElement('div'),{innerHTML:'ISA-18.2 alarms<br><code>assets/screenshots/alarms.png</code>'}))"></div>
+    <div class="shot"><div>Demo GIF placeholder<br>add <code>assets/screenshots/demo.gif</code> and replace this box with an &lt;img&gt; tag</div></div>
+  </div>
+  <div class="cta"><a class="btn pri" href="simulator/index.html">&#9654; Launch Simulator</a><a class="btn" href="ladder/index.html">&#9776; View Ladder Logic</a></div>
+</div></section>
+
+<section id="about"><div class="wrap about">
+  <div>
+    <h2>About</h2>
+    <p class="sub" style="margin-bottom:10px"><b>Zaheer Abbas</b> &mdash; Electrical Engineer, FAST-NUCES.</p>
+    <p>I build and commission control systems, and this project shows how I think about them end to end: logic design, interlocks and safety, operator experience, alarm philosophy, production data and testing. It is meant to be explored &mdash; try the fault scenarios and edit the ladder while the plant runs.</p>
+    <div class="skills"><span>PLC programming</span><span>Ladder / ST / FBD / SFC</span><span>SCADA / HMI</span><span>Industrial automation</span><span>PID control</span><span>Alarm management</span></div>
+  </div>
+  <div class="card contact"><h3>Contact</h3><p>Edit these links in <code>index.html</code> before publishing.</p>
+    <a href="mailto:your.email@example.com">&#9993; your.email@example.com</a><a href="https://www.linkedin.com/in/your-profile">&#128279; LinkedIn: your-profile</a><a href="https://github.com/your-username">&#128025; GitHub: your-username</a></div>
+</div></section>
+</main>
+<footer><div class="wrap">&copy; <span id="yr">2026</span> Zaheer Abbas &middot; Smart Beverage Plant PLC + HMI/SCADA Simulator &middot; Demo software for portfolio and training use. <a href="tests.html">Self-tests</a></div></footer>
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(function () {});
+</script>
+</body>
+</html>
